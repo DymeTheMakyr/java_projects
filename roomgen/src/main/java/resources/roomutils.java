@@ -5,7 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class roomutils {
-		
+	
+	public static String stringify(int[] in) {
+		String result = "";
+		for (int i : in) result += String.format("%d", i);
+		return result;
+	}
+	
 	//////////////////////
 	//// VECTOR CLASS ////
 	//////////////////////
@@ -44,6 +50,7 @@ public class roomutils {
 		public Vec pos = new Vec();
 		public int[] slots;
 		public int source;
+		public int type = 15;
 		
 		//Room for x and y
 		public Room(int x, int y) {
@@ -79,6 +86,53 @@ public class roomutils {
 			this.slots = slots;
 			this.source = source;
 		}
+		
+		public static int identify(Room r) {
+			int[] temp = new int[4];
+			
+			temp = Arrays.copyOf(r.slots, r.slots.length);
+			temp[r.source] = 1;
+			
+			switch (stringify(temp)){
+				case "0101":
+					return 1;
+				case "1010":
+					return 2;
+					
+				case "1000":
+					return 3;
+				case "0100":
+					return 4;
+				case "0010":
+					return 5;
+				case "0001":
+					return 6;
+					
+				case "1100":
+					return 7;
+				case "0110":
+					return 8;
+				case "0011":
+					return 9;
+				case "1001":
+					return 10;
+				
+				case "1101":
+					return 11;
+				case "1110":
+					return 12;
+				case "0111":
+					return 13;
+				case "1011":
+					return 14;
+				
+				case "1111":
+					return 0;
+				
+				default:
+					return 15;
+			}
+		}
 	}
 	
 	/////////////////////
@@ -88,26 +142,49 @@ public class roomutils {
 		Random ran = new Random();
 		public Room[][] map;
 		public Vector<Room> toProcess;
-		public Vec source;
+		public Vec source;		
+		
+		public String[][] roomShapes = new String[][] {
+			{"-0-","000","-0-"},
+			
+			{"---","000","---"},
+			{"-0-","-0-","-0-"},
+			
+			{"-0-","-0-","---"},
+			{"---","-00","---"},
+			{"---","-0-","-0-"},
+			{"---","00-","---"},
+			
+			{"-0-","-00","---"},
+			{"---","-00","-0-"},
+			{"---","00-","-0-"},
+			{"-0-","00-","---"},
+			
+			{"-0-","000","---"},
+			{"-0-","-00","-0-"},
+			{"---","000","-0-"},
+			{"-0-","00-","-0-"},
+			
+			{"---","---","---"}
+		};
 		
 		Map<Integer, Vec> dir2vec = new HashMap<Integer,Vec>();
-		Map<Integer[], Integer> vec2dir = new HashMap<Integer[],Integer>();
 		
 		public int width;
 		public int height;
 		
 		public void printWorld() {
 			for (Room[] i : this.map) {
-				String row = "";
-				for (Room j : i) {
-					if (j.slots != null) {
-						row += "0";
-					} else {
-						row += "-";
+				for (int k=0; k < 3; k++) {
+					for (Room j : i) {
+						if (-1 < j.type && j.type < 16 ) {
+							System.out.print(roomShapes[j.type][k]);
+						} else {
+							System.out.print(roomShapes[15][k]);
+						}
 					}
+					System.out.println();
 				}
-				
-				System.out.println(row);
 			}
 		}
 		
@@ -118,26 +195,35 @@ public class roomutils {
 		public Room[] extendRoom(Room r) {
 			ArrayList<Room> rooms = new ArrayList<Room>();
 			for (int i = 0; i < r.slots.length; i++) {
-				if (r.slots[i] == 1) {
+				if (r.slots[i] == 1 && getRoom(dir2vec.get(i).Add(r.pos)).type == 15) {
 					System.out.println(i);
 					Room temp = new Room(dir2vec.get(i).Add(r.pos));
 					temp.slots = new int[] {0,0,0,0};
 					temp.source = Vec.InvertDir(i);
-					System.out.println("room made");
+					//System.out.println("room made");
 					int totalSlots = ran.nextInt(0, 3);
 					while (totalSlots > 0) {
 						int ranSlot = ran.nextInt(0,4);
-						System.out.print(String.format("%d, %d, %d", totalSlots, ranSlot, temp.source));
+						//System.out.print(String.format("%d, %d, %d", totalSlots, ranSlot, temp.source));
 						if (ranSlot != temp.source) {
 							temp.slots[ranSlot] = 1;
 							totalSlots -= 1;
-							System.out.println("  node generated");
-						} else System.out.println(" X");
+							//System.out.println("  node generated");
+						} else; //System.out.println(" X");
 					}
+					
+					if (temp.pos.x <= 0) temp.slots[3] = 0;
+					else if (temp.pos.x >= map[0].length-1) temp.slots[1] = 0;
+					if (temp.pos.y <= 0) temp.slots[0] = 0;	
+					else if (temp.pos.y >= map.length-1) temp.slots[2] = 0;
+					
+					temp.type = Room.identify(temp);
+					//System.out.println("Made room of type" + temp.type + "at position X:" + temp.pos.x + " Y:" + temp.pos.y);
 					rooms.add(temp);
 					toProcess.add(temp);
 				}
 			}
+		
 			
 			for (Room i : rooms) {
 				map[(int) i.pos.y][(int) i.pos.x] = i;
@@ -146,16 +232,11 @@ public class roomutils {
 			return Arrays.copyOf(rooms.toArray(), rooms.toArray().length, Room[].class);
 		}
 		
-		public void init(int[] size, Vec s) {
+		public World(int[] size, Vec s) {
 			dir2vec.put(0, new Vec(0,-1));
 			dir2vec.put(1, new Vec(1,0));
 			dir2vec.put(2, new Vec(0,1));
 			dir2vec.put(3, new Vec(-1,0));
-			
-			vec2dir.put(new Integer[]{0,-1}, 0);
-			vec2dir.put(new Integer[] {1,0}, 1);
-			vec2dir.put(new Integer[] {0,1}, 2);
-			vec2dir.put(new Integer[]{-1,0}, 3);
 			
 			toProcess = new Vector<Room>();
 			
@@ -167,6 +248,7 @@ public class roomutils {
 					if (z == s.x && w == s.y) {
 						System.out.println(String.format("Source Allocated at %d, %d", z, w));
 						map[w][z] = new Room(z, w, new int[] {1,1,1,1}, -1);
+						map[w][z].type = 0;
 						toProcess.add(map[w][z]);
 					}
 					else {

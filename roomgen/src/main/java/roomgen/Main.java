@@ -10,25 +10,28 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);	
-		World world = new World();
-		world.init(new int[] {5, 5}, new Vec(2,2));
-		world.toProcess.add(world.getRoom(new Vec(2,2)));
+		World world = new World(new int[] {15, 15}, new Vec(3,3));
 		
 		while (true) {
-			world.printWorld();
-			Vector<Room> temp = new Vector<Room>(world.toProcess);
-			world.toProcess.clear();
-			if (input.nextLine().toLowerCase().contains("e")) break;
-			else {
+			Vector<Room> temp;
+			while (world.toProcess.toArray().length > 0) {
+				world.printWorld();
+				temp = new Vector<Room>(world.toProcess);
+				world.toProcess.clear();
 				for (Room i : temp) {
-					System.out.println("started extension");
-					System.out.println(i);
+					//System.out.println("started extension");
+					//System.out.println(i);
 					world.extendRoom(i);
-					System.out.println("extended room");
-				}
-				System.out.println("finished extension");
+					//System.out.println("extended room");
+				}	
 			}
-			System.out.println("single loop complete");
+			
+			if (input.nextLine().contains("e")) break;
+			else {
+				world = new World(new int[] {15, 15}, new Vec(7,7));
+				world.printWorld();
+				temp = new Vector<Room>(world.toProcess);
+			}
 		}
 		
 		input.close();
