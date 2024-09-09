@@ -28,8 +28,9 @@ public class roomutils {
 			return new Vec(this.x + vec.x, this.y + vec.y);
 		}
 		
-		public Vec Invert() {
-			return new Vec(this.x*-1, this.y*-1);
+		public static int InvertDir(int dir) {
+			if (dir+2<4) return dir+2;
+			else return dir-2;
 		}
 	}
 	
@@ -58,6 +59,14 @@ public class roomutils {
 			this.pos = pos;
 			this.slots = null;
 		}
+
+		//room for Vec, and source
+		public Room(Vec pos, int source) {
+			this.pos = pos;
+			this.slots = new int[4];
+			this.source = source;
+		}
+		
 		//room for Vec, slots and source
 		public Room(Vec pos, int[] slots, int source) {
 			this.pos = pos;
@@ -73,7 +82,7 @@ public class roomutils {
 		public Vec source;
 		
 		Map<Integer, Vec> dir2vec = new HashMap<Integer,Vec>();
-		Map<Vec, Integer> vec2dir = new HashMap<Vec,Integer>();
+		Map<Integer[], Integer> vec2dir = new HashMap<Integer[],Integer>();
 		
 		public int width;
 		public int height;
@@ -102,11 +111,13 @@ public class roomutils {
 			for (int i = 0; i < r.slots.length; i++) {
 				if (r.slots[i] == 1) {
 					rooms.add(new Room(dir2vec.get(i).Add(r.pos)));
-					rooms.get(i).source = vec2dir.get(rooms.get(i).pos.Invert());
+					System.out.println("test 3");
+					rooms.get(i).source = Vec.InvertDir(i);
 					
 					int totalSlots = ran.nextInt(0, 3);
 					while (totalSlots > 0) {
 						int ranSlot = ran.nextInt(0,4);
+						System.out.println(String.format("%d, %d, %d", totalSlots, ranSlot, rooms.get(i).source));
 						if (rooms.get(i).slots[ranSlot] != rooms.get(i).source) {
 							rooms.get(i).slots[ranSlot] = 1;
 							totalSlots -= 1;
@@ -125,10 +136,10 @@ public class roomutils {
 			dir2vec.put(2, new Vec(0,1));
 			dir2vec.put(3, new Vec(-1,0));
 			
-			vec2dir.put(new Vec(0,-1), 0);
-			vec2dir.put(new Vec(1,0), 1);
-			vec2dir.put(new Vec(0,1), 2);
-			vec2dir.put(new Vec(-1,0), 3);
+			vec2dir.put(new Integer[]{0,-1}, 0);
+			vec2dir.put(new Integer[] {1,0}, 1);
+			vec2dir.put(new Integer[] {0,1}, 2);
+			vec2dir.put(new Integer[]{-1,0}, 3);
 			
 			toProcess = new Vector<Room>();
 			
