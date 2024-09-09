@@ -3,9 +3,12 @@ package resources;
 import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 public class roomutils {
+		
+	//////////////////////
+	//// VECTOR CLASS ////
+	//////////////////////
 	public static class Vec{
 		public float x;
 		public float y;
@@ -33,7 +36,10 @@ public class roomutils {
 			else return dir-2;
 		}
 	}
-	
+		
+	////////////////////
+	//// ROOM CLASS ////
+	////////////////////
 	public static class Room{
 		public Vec pos = new Vec();
 		public int[] slots;
@@ -75,6 +81,9 @@ public class roomutils {
 		}
 	}
 	
+	/////////////////////
+	//// WORLD CLASS ////
+	/////////////////////
 	public static class World{
 		Random ran = new Random();
 		public Room[][] map;
@@ -107,26 +116,33 @@ public class roomutils {
 		}
 		
 		public Room[] extendRoom(Room r) {
-			Vector<Room> rooms = new Vector<Room>();
+			ArrayList<Room> rooms = new ArrayList<Room>();
 			for (int i = 0; i < r.slots.length; i++) {
 				if (r.slots[i] == 1) {
-					rooms.add(new Room(dir2vec.get(i).Add(r.pos)));
-					System.out.println("test 3");
-					rooms.get(i).source = Vec.InvertDir(i);
-					
+					System.out.println(i);
+					Room temp = new Room(dir2vec.get(i).Add(r.pos));
+					temp.slots = new int[] {0,0,0,0};
+					temp.source = Vec.InvertDir(i);
+					System.out.println("room made");
 					int totalSlots = ran.nextInt(0, 3);
 					while (totalSlots > 0) {
 						int ranSlot = ran.nextInt(0,4);
-						System.out.println(String.format("%d, %d, %d", totalSlots, ranSlot, rooms.get(i).source));
-						if (rooms.get(i).slots[ranSlot] != rooms.get(i).source) {
-							rooms.get(i).slots[ranSlot] = 1;
+						System.out.print(String.format("%d, %d, %d", totalSlots, ranSlot, temp.source));
+						if (ranSlot != temp.source) {
+							temp.slots[ranSlot] = 1;
 							totalSlots -= 1;
-						}
+							System.out.println("  node generated");
+						} else System.out.println(" X");
 					}
-					toProcess.add(rooms.get(i));
+					rooms.add(temp);
+					toProcess.add(temp);
 				}
 			}
-
+			
+			for (Room i : rooms) {
+				map[(int) i.pos.y][(int) i.pos.x] = i;
+			}
+			
 			return Arrays.copyOf(rooms.toArray(), rooms.toArray().length, Room[].class);
 		}
 		

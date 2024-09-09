@@ -16,8 +16,19 @@ public class Main {
 		
 		while (true) {
 			world.printWorld();
-			if (input.nextLine().toLowerCase() == "e") break;
-			else {for (Room i : world.toProcess) world.extendRoom(i);}
+			Vector<Room> temp = new Vector<Room>(world.toProcess);
+			world.toProcess.clear();
+			if (input.nextLine().toLowerCase().contains("e")) break;
+			else {
+				for (Room i : temp) {
+					System.out.println("started extension");
+					System.out.println(i);
+					world.extendRoom(i);
+					System.out.println("extended room");
+				}
+				System.out.println("finished extension");
+			}
+			System.out.println("single loop complete");
 		}
 		
 		input.close();
