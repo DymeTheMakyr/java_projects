@@ -10,7 +10,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);	
-		World world = new World(new int[] {15, 15}, new Vec(3,3));
+		World world = new World(new int[] {11, 7}, new Vec(5,3));
 		
 		while (true) {
 			Vector<Room> temp;
@@ -28,7 +28,7 @@ public class Main {
 			
 			if (input.nextLine().contains("e")) break;
 			else {
-				world = new World(new int[] {15, 15}, new Vec(7,7));
+				world = new World(new int[] {15, 7}, new Vec(5,3));
 				world.printWorld();
 				temp = new Vector<Room>(world.toProcess);
 			}
