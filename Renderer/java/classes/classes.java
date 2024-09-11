@@ -4,31 +4,39 @@ import java.util.*;
 import java.lang.Math;
 
 public class classes {
-	public static class screenCoord{
+	public static class ScreenCoord{
 		double x;
 		double y;
 		
-		public screenCoord(double x, double y) {
+		public ScreenCoord(double x, double y) {
 			this.x = x;
 			this.y = y;
 		}
 	}
 	
-	public static class polarVec{
+	public static class PolarVec{
 		double magnitude;
 		double theta;
 		double phi;
 		
-		public polarVec(double magnitude, double theta, double phi) {
+		public PolarVec(double magnitude, double theta, double phi) {
 			this.magnitude = magnitude;
 			this.theta = theta;
 			this.phi = phi;
 		}
 		
-		public static screenCoord toScreen(polarVec point) {
-			screenCoord result = new screenCoord(0,0);
+		public static ScreenCoord toScreen(PolarVec point) {
+			ScreenCoord result = new ScreenCoord(0,0);
 			result.x = point.magnitude * Math.tan(point.theta);
 			result.y = point.magnitude * Math.tan(point.phi);
+			return result;
+		}
+		
+		public static ScreenCoord[] toScreen(PolarVec[] points) {
+			ScreenCoord[] result = new ScreenCoord[points.length];
+			for (int i = 0; i < points.length; i++) {
+				result[i] = PolarVec.toScreen(points[i]);
+			}
 			return result;
 		}
 	}
@@ -65,8 +73,8 @@ public class classes {
 			return Math.sqrt((Math.pow(vec2.x - vec1.x, 2) + Math.pow(vec2.y-vec1.y,2) + Math.pow(vec2.z - vec1.z, 2)));
 		}
 		
-		public static polarVec toPolar(Vec point) {
-			polarVec result = new polarVec(0, 0, 0);
+		public static PolarVec toPolar(Vec point) {
+			PolarVec result = new PolarVec(0, 0, 0);
 			
 			result.magnitude = Vec.distance(Vec.zero, point);
 			result.theta = Math.atan(point.x/point.z);
@@ -75,26 +83,26 @@ public class classes {
 			return result;
 		}
 		
-		public static polarVec[] toPolar(Vec[] points) {
-			polarVec[] result = new polarVec[points.length];
+		public static PolarVec[] toPolar(Vec[] points) {
+			PolarVec[] result = new PolarVec[points.length];
 			for (int i = 0; i < points.length; i++) {
 				result[i] = Vec.toPolar(points[i]);
 			}
 			return result;
 		}
 	}
-	public static class gameObject {
+	public static class GameObject {
 		Vec[] points;
-		polarVec[] polarPoints;
-		screenCoord[] screenPoints;
+		PolarVec[] polarPoints;
+		ScreenCoord[] screenPoints;
 		
 		Vec origin;
 		
-		public gameObject(Vec o, Vec[] p) {
+		public GameObject(Vec o, Vec[] p) {
 			this.origin = o;
 			this.points = p;
 			this.polarPoints = Vec.toPolar(p);
-			this.screenPoints = polarVec.toScreen(p);
+			this.screenPoints = PolarVec.toScreen(this.polarPoints);
 		}
 	}
 }
