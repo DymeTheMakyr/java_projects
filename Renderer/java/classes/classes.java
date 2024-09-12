@@ -4,9 +4,14 @@ import java.util.*;
 import java.lang.Math;
 
 public class classes {
+	public static class Camera{
+		public static double fovx = 0.5*Math.PI;
+		public static double fovy = 0.25*Math.PI;
+	}
+	
 	public static class ScreenCoord{
-		double x;
-		double y;
+		public double x;
+		public double y;
 		
 		public ScreenCoord(double x, double y) {
 			this.x = x;
@@ -15,9 +20,9 @@ public class classes {
 	}
 	
 	public static class PolarVec{
-		double magnitude;
-		double theta;
-		double phi;
+		public double magnitude;
+		public double theta;
+		public double phi;
 		
 		public PolarVec(double magnitude, double theta, double phi) {
 			this.magnitude = magnitude;
@@ -43,9 +48,9 @@ public class classes {
 	
 	
 	public static class Vec {
-		double x = 0.0;
-		double y = 0.0;
-		double z = 0.0;
+		public double x = 0.0;
+		public double y = 0.0;
+		public double z = 0.0;
 		
 		public static Vec zero = new Vec(0,0,0);
 		
@@ -75,10 +80,9 @@ public class classes {
 		
 		public static PolarVec toPolar(Vec point) {
 			PolarVec result = new PolarVec(0, 0, 0);
-			
-			result.magnitude = Vec.distance(Vec.zero, point);
-			result.theta = Math.atan(point.x/point.z);
-			result.phi = Math.atan(point.y/point.z);
+			result.magnitude= Math.sqrt(Math.pow(point.x, 2)+Math.pow(point.y, 2)+Math.pow(point.z, 2));
+			result.theta = Math.atan(Math.sqrt(Math.pow(point.x, 2)+Math.pow(point.y, 2))/point.z);
+			result.phi = Math.acos(point.y/point.x);
 			
 			return result;
 		}
@@ -92,16 +96,23 @@ public class classes {
 		}
 	}
 	public static class GameObject {
-		Vec[] points;
-		PolarVec[] polarPoints;
-		ScreenCoord[] screenPoints;
+		public Vec[] points;
+		Vec[] absPoints;
+		public PolarVec[] polarPoints;
+		public ScreenCoord[] screenPoints;
 		
-		Vec origin;
+		public Vec origin;
 		
 		public GameObject(Vec o, Vec[] p) {
 			this.origin = o;
 			this.points = p;
-			this.polarPoints = Vec.toPolar(p);
+			this.absPoints = Arrays.copyOf(p, p.length);
+			Vec[] temp = new Vec[p.length];
+			for (int i = 0; i < p.length; i++) {
+				temp[i] = this.absPoints[i].Add(o);
+			}
+			this.absPoints = temp;
+			this.polarPoints = Vec.toPolar(this.absPoints);
 			this.screenPoints = PolarVec.toScreen(this.polarPoints);
 		}
 	}
