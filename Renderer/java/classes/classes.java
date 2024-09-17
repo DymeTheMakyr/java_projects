@@ -1,12 +1,17 @@
 package classes;
 
 import java.util.*;
+
 import java.lang.Math;
 
 public class classes {
 	public static class Camera{
-		public static double fovx = 0.5*Math.PI;
-		public static double fovy = 0.25*Math.PI;
+		public static double fovX = 0.5*Math.PI;
+		public static double fovY = 0.25*Math.PI;
+		public static int screenWidth = 900;
+		public static int screenHeight = 450;
+		public static int xOffset = Math.round(screenHeight)/2;
+		public static int yOffset = Math.round(screenHeight/2);
 	}
 	
 	public static class ScreenCoord{
@@ -32,8 +37,9 @@ public class classes {
 		
 		public static ScreenCoord toScreen(PolarVec point) {
 			ScreenCoord result = new ScreenCoord(0,0);
-			result.x = point.magnitude * Math.tan(point.theta);
-			result.y = point.magnitude * Math.tan(point.phi);
+			result.x = (point.theta + (0.5*Camera.fovX))*Camera.screenWidth/Camera.fovX;
+			result.y = (1-((point.phi+(0.5*Camera.fovY))/Camera.fovY))*Camera.screenHeight;
+			
 			return result;
 		}
 		
@@ -53,7 +59,7 @@ public class classes {
 		public double z = 0.0;
 		
 		public static Vec zero = new Vec(0,0,0);
-		
+	
 		public Vec(double x, double y) {
 			this.x = x;
 			this.y = y;
@@ -81,9 +87,11 @@ public class classes {
 		public static PolarVec toPolar(Vec point) {
 			PolarVec result = new PolarVec(0, 0, 0);
 			result.magnitude= Math.sqrt(Math.pow(point.x, 2)+Math.pow(point.y, 2)+Math.pow(point.z, 2));
-			result.theta = Math.atan(Math.sqrt(Math.pow(point.x, 2)+Math.pow(point.y, 2))/point.z);
-			result.phi = Math.acos(point.y/point.x);
-			
+			result.theta = Math.atan(point.x/point.z);
+			result.phi = Math.atan(point.y/result.magnitude);
+			if (Double.isNaN(result.theta)) result.theta = 0.01;
+			//if (result.theta > Math.PI) result.theta = -(2*Math.PI - result.theta);
+			//if (result.phi > Math.PI) result.theta = -(2*Math.PI - result.phi);
 			return result;
 		}
 		
@@ -97,7 +105,7 @@ public class classes {
 	}
 	public static class GameObject {
 		public Vec[] points;
-		Vec[] absPoints;
+		public Vec[] absPoints;
 		public PolarVec[] polarPoints;
 		public ScreenCoord[] screenPoints;
 		
