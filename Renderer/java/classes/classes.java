@@ -103,17 +103,28 @@ public class classes {
 			return result;
 		}
 	}
+	
+	public static class Tri{
+		public Vec[] tri;
+		
+		public Tri(Vec vec1, Vec vec2, Vec vec3) {
+			this.tri = new Vec[]{vec1, vec2, vec3};
+		}
+	}
+	
 	public static class GameObject {
 		public Vec[] points;
 		public Vec[] absPoints;
+		public Tri[] tris;
 		public PolarVec[] polarPoints;
 		public ScreenCoord[] screenPoints;
 		
 		public Vec origin;
 		
-		public GameObject(Vec o, Vec[] p) {
+		public GameObject(Vec o, Vec[] p, Tri[] t) {
 			this.origin = o;
 			this.points = p;
+			this.tris = t;
 			this.absPoints = Arrays.copyOf(p, p.length);
 			Vec[] temp = new Vec[p.length];
 			for (int i = 0; i < p.length; i++) {

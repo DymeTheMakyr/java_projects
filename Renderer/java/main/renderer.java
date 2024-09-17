@@ -5,16 +5,34 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class renderer extends Frame	{	
-	public GameObject obj1 = new GameObject(new Vec(0,0, 5), new Vec[] {
-		new Vec(1,1,1),
-		new Vec(-1,1,1),
-		new Vec(-1,-1,1),
-		new Vec(1,-1,1),
-		new Vec(1,1,-1),
-		new Vec(-1,1,-1),
-		new Vec(-1,-1,-1),
-		new Vec(1,-1,-1)
-	});
+	public Vec[] op =  new Vec[] {
+			new Vec(1,1,1),
+			new Vec(-1,1,1),
+			new Vec(-1,-1,1),
+			new Vec(1,-1,1),
+			new Vec(1,1,-1),
+			new Vec(-1,1,-1),
+			new Vec(-1,-1,-1),
+			new Vec(1,-1,-1)
+		};
+	public GameObject obj1 = new GameObject(new Vec(0,0, 5), op,
+		new Tri[] {
+			new Tri(op[0], op[1], op[3]),
+			new Tri(op[1], op[2], op[3]),
+			new Tri(op[1], op[5], op[2]),
+			new Tri(op[5], op[6], op[2]),
+			new Tri(op[5], op[4], op[6]),
+			new Tri(op[4], op[7], op[6]),
+			new Tri(op[4], op[0], op[7]),
+			new Tri(op[0], op[3], op[7]),
+			
+			new Tri(op[4], op[5], op[0]),
+			new Tri(op[5], op[1], op[0]),
+			
+			new Tri(op[2], op[3], op[6]),
+			new Tri(op[3], op[7], op[6])
+		}
+	);
 	
 	public renderer() {
 		setVisible(true);
