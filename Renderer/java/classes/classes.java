@@ -106,9 +106,12 @@ public class classes {
 	
 	public static class Tri{
 		public Vec[] tri;
-		
-		public Tri(Vec vec1, Vec vec2, Vec vec3) {
+		public Vec[] absTri;
+		public Vec origin;
+		public Tri(Vec vec1, Vec vec2, Vec vec3, Vec origin) {
 			this.tri = new Vec[]{vec1, vec2, vec3};
+			this.absTri = new Vec[] {vec1.Add(origin),vec2.Add(origin),vec3.Add(origin)};
+			this.origin = origin;
 		}
 	}
 	
