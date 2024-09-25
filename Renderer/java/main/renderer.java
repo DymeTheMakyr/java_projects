@@ -6,24 +6,11 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.lang.Thread;
 import java.util.ArrayList;
-import 
+import ejml.*;
 
 
-public class renderer extends Frame	{	
-
-	public Vec[] fp = new Vec[] {
-		new Vec(3000,0,3000),
-		new Vec(-3000,0,3000),
-		new Vec(-3000,0,0),
-		new Vec(3000,0,0),
-	};
-	public Vec fOrigin = new Vec(0,-1,0);
-	public GameObject floor = new GameObject(fOrigin, 
-		new Tri[] {
-			new Tri(fp[0], fp[1], fp[3], fOrigin),
-			new Tri(fp[1], fp[2], fp[3], fOrigin)
-	});
-	
+public class renderer extends Frame	{
+	private static final long serialVersionUID = 1L;
 	public Vec[] op =  new Vec[] {
 			new Vec(1,1,1),
 			new Vec(-1,1,1),

@@ -1,7 +1,7 @@
 package classes;
 
 import java.util.*;
-import ejml.*;
+import com.
 import java.awt.*;
 import java.awt.image.*;
 import java.lang.Math;
