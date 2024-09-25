@@ -1,7 +1,7 @@
 package classes;
 
 import java.util.*;
-
+import ejml.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.lang.Math;
@@ -62,9 +62,8 @@ public class classes {
 		public ScreenCoord VecToScreen(Vec vec) {
 			ScreenCoord result = new ScreenCoord(0, 0);
 			
-			result.x = (int)((float)(vec.x/vec.z+1)/2*Camera.screenWidth);
-			result.y = (int)((float)(vec.y/vec.z+1)/2*Camera.screenHeight);
-						
+			
+			
 			return result;
 		}
 	}
@@ -116,13 +115,13 @@ public class classes {
 			System.out.println("Tris");
 			
 			for (int i = tempObj.tris.length-1; i >= 0; i--) {
-				ScreenCoord point1 = PolarVec.toScreen(Vec.toPolar(tempObj.tris[i].absTri[0]));
-				ScreenCoord point2 = PolarVec.toScreen(Vec.toPolar(tempObj.tris[i].absTri[1]));
-				ScreenCoord point3 = PolarVec.toScreen(Vec.toPolar(tempObj.tris[i].absTri[2]));
-				g.drawLine(point1.x, point1.y, point2.x, point2.y);
-				g.drawLine(point2.x, point2.y, point3.x, point3.y);
-				g.drawLine(point1.x, point1.y, point3.x, point3.y);
-				if (tempObj.id == 3) System.out.println("1:" + point1.x + " "+point1.y + "  2:" + point2.x + " "+point2.y + "  3:" + point3.x + " "+point3.y);
+////				ScreenCoord point1 = PolarVec.toScreen(Vec.VecToScreen(tempObj.tris[i].absTri[0]));
+////				ScreenCoord point2 = PolarVec.toScreen(Vec.toPolar(tempObj.tris[i].absTri[1]));
+////				ScreenCoord point3 = PolarVec.toScreen(Vec.toPolar(tempObj.tris[i].absTri[2]));
+//				g.drawLine(point1.x, point1.y, point2.x, point2.y);
+//				g.drawLine(point2.x, point2.y, point3.x, point3.y);
+//				g.drawLine(point1.x, point1.y, point3.x, point3.y);
+//				if (tempObj.id == 3) System.out.println("1:" + point1.x + " "+point1.y + "  2:" + point2.x + " "+point2.y + "  3:" + point3.x + " "+point3.y);
 			}
 			System.out.println("Tris complete "+ tempObj.id);
 			
