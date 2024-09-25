@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.lang.Thread;
 import java.util.ArrayList;
+import 
 
 
 public class renderer extends Frame	{	
@@ -113,7 +114,12 @@ public class renderer extends Frame	{
 		}, 0
 	);
 	
-	public GameObject[] objects = new GameObject[] {obj3, obj2, obj1, obj4};
+	GameObject stlObj1 = Compute.stlToGameObject("C:\\Users\\Hugo\\eclipse-workspace\\Renderer\\java\\main\\default.stl", new Vec(-3,2,6), 1);
+	GameObject stlObj2 = Compute.stlToGameObject("C:\\Users\\Hugo\\eclipse-workspace\\Renderer\\java\\main\\default.stl", new Vec(3,2,6), 1);
+	GameObject stlObj3 = Compute.stlToGameObject("C:\\Users\\Hugo\\eclipse-workspace\\Renderer\\java\\main\\default.stl", new Vec(-3,-2,6), 1);
+	GameObject stlObj4 = Compute.stlToGameObject("C:\\Users\\Hugo\\eclipse-workspace\\Renderer\\java\\main\\default.stl", new Vec(3,-2,6), 1);
+	
+	public GameObject[] objects = new GameObject[] {stlObj1, stlObj2, stlObj3, stlObj4};
 	
 	public renderer() {
 		setVisible(true);
@@ -149,9 +155,10 @@ public class renderer extends Frame	{
 			threads.getLast().start();
 		}
 		
-		
+		int counter = 0;
 		while (frames.size() < objects.length) {
-			System.out.println("waiting for objects  " + frames.size());
+			counter++;
+			System.out.print(" ");
 		}
 		
 		for (BufferedImage i : frames) {

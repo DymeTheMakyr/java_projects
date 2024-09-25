@@ -27,34 +27,6 @@ public class classes {
 		}
 	}
 	
-	public static class PolarVec{
-		public double magnitude;
-		public double theta;
-		public double phi;
-		
-		public PolarVec(double magnitude, double theta, double phi) {
-			this.magnitude = magnitude;
-			this.theta = theta;
-			this.phi = phi;
-		}
-		
-		public static ScreenCoord toScreen(PolarVec point) {
-			ScreenCoord result = new ScreenCoord(0,0);
-			result.x = (int)Math.round((point.theta + (0.5*Camera.fovX))*Camera.screenWidth/Camera.fovX);
-			result.y = (int)Math.round((1-((point.phi+(0.5*Camera.fovY))/Camera.fovY))*Camera.screenHeight);
-			
-			return result;
-		}
-		
-		public static ScreenCoord[] toScreen(PolarVec[] points) {
-			ScreenCoord[] result = new ScreenCoord[points.length];
-			for (int i = 0; i < points.length; i++) {
-				result[i] = PolarVec.toScreen(points[i]);
-			}
-			return result;
-		}
-	}
-	
 	
 	public static class Vec {
 		public double x = 0.0;
@@ -87,22 +59,12 @@ public class classes {
 			return Math.sqrt((Math.pow(vec2.x - vec1.x, 2) + Math.pow(vec2.y-vec1.y,2) + Math.pow(vec2.z - vec1.z, 2)));
 		}	
 		
-		public static PolarVec toPolar(Vec point) {
-			PolarVec result = new PolarVec(0, 0, 0);
-			result.magnitude= Math.sqrt(Math.pow(point.x, 2)+Math.pow(point.y, 2)+Math.pow(point.z, 2));
-			result.theta = Math.atan(point.x/point.z);
-			result.phi = Math.atan(point.y/result.magnitude);
-			if (Double.isNaN(result.theta)) result.theta = 0.01;
-			//if (result.theta > Math.PI) result.theta = -(2*Math.PI - result.theta);
-			//if (result.phi > Math.PI) result.theta = -(2*Math.PI - result.phi);
-			return result;
-		}
-		
-		public static PolarVec[] toPolar(Vec[] points) {
-			PolarVec[] result = new PolarVec[points.length];
-			for (int i = 0; i < points.length; i++) {
-				result[i] = Vec.toPolar(points[i]);
-			}
+		public ScreenCoord VecToScreen(Vec vec) {
+			ScreenCoord result = new ScreenCoord(0, 0);
+			
+			result.x = (int)((float)(vec.x/vec.z+1)/2*Camera.screenWidth);
+			result.y = (int)((float)(vec.y/vec.z+1)/2*Camera.screenHeight);
+						
 			return result;
 		}
 	}
@@ -168,13 +130,50 @@ public class classes {
 			return result;
 		}
 		
-		public static GameObject stlToGameObject(String filePath, Vec origin) throws FileNotFoundException, IOException {
-			File file = new File(filePath);
-			Reader input = new FileReader(file);
+		public static GameObject stlToGameObject(String filePath, Vec origin, double scale) {
+			try {
+				File file = new File(filePath);
+				Scanner input = new Scanner(file);
+				
+				ArrayList<Tri> tempTris = new ArrayList<>();
+				
+				boolean running = true;
+				while (running) {
+					String[][] row = new String[3][4];
+					String temp = input.nextLine();
+					
+					if (temp.toLowerCase().contains("vertex")) {
+						row[0] = temp.trim().split("[\\s]");
+						row[1] = input.nextLine().trim().split("[\\s]");
+						row[2] = input.nextLine().trim().split("[\\s]");
+						
+						System.out.println("vert 1 " + String.join(" | ", row[0]));
+						System.out.println("vert 2 "+ String.join(" | ", row[1]));
+						System.out.println("vert 3 "+String.join(" | ", row[2]));
+						
+						Vec vec1 = new Vec(Double.parseDouble(row[0][1])*scale,Double.parseDouble(row[0][2])*scale,Double.parseDouble(row[0][3])*scale);
+						Vec vec2 = new Vec(Double.parseDouble(row[1][1])*scale,Double.parseDouble(row[1][2])*scale,Double.parseDouble(row[1][3])*scale);
+						Vec vec3 = new Vec(Double.parseDouble(row[2][1])*scale,Double.parseDouble(row[2][2])*scale,Double.parseDouble(row[2][3])*scale);
+						
+						tempTris.add(new Tri(vec1, vec2, vec3, origin));
+					}
+					
+					if (!input.hasNextLine()) {
+						running = false;
+						break;
+					}
+				}
+				
+				Tri[] finalTris = new Tri[tempTris.size()];
+				finalTris = tempTris.toArray(finalTris);
+				GameObject result = new GameObject(origin, finalTris);
+				
+				input.close();
+				return result;
+			} catch (Exception e){
+				System.out.println("File not found" + e);
+			}
 			
-			
-			
-			input.close();
 			return null;
 		}
 	}
